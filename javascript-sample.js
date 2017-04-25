@@ -1,23 +1,27 @@
 ((state, timeLeftFn) => {
-    const turnDirections = ['right', 'left', 'about-face'];
-    const turnDirection = turnDirections[Math.floor(Math.random() * 3)];
+  const wildCard = (actions) => actions[Math.floor(Math.random() * actions.length)];
 
-    const smokeDirections = ['forward', 'backward', 'left', 'right', 'drop'];
-    const smokeDirection = smokeDirections[Math.floor(Math.random() * 5)];
+  const directions = ['right', 'left', 'about-face'];
 
-    const index = Math.floor(Math.random() * 17);
-    const command = index < 10 ?
-        { action: 'move', metadata: {} } :
-        index < 12 ?
-            { action: 'turn', metadata: { direction: turnDirection } } :
-            index < 16 ?
-                { action: 'shoot', metadata: {} } :
-                { action: 'smoke', metadata: { direction: smokeDirection } };
+  const shoot =  { action: 'shoot', metadata: {} };
 
+  const turn = (direction) => {
     return {
-        command,
-        state: {
-            hello: 'world'
-        }
+      action: 'turn',
+      metadata: {
+        direction: direction
+      }
     };
+  };
+
+  const savedState = state['saved-state'];
+
+  const command = savedState.lastCommand === 'shoot' ? turn(wildCard(directions)) : shoot;
+
+ return {
+    command: command,
+    state: {
+        lastCommand: command.action
+    }
+ }
 });
